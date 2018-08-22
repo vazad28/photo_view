@@ -10,7 +10,7 @@ class ScaleBoundaries {
 
   ScaleBoundaries(this._minScale, this._maxScale, { @required this.size, @required this.imageInfo}) :
         assert(_minScale is double || _minScale is PhotoViewScaleBoundary),
-        assert(_maxScale is double || _maxScale is PhotoViewScaleBoundary));
+        assert(_maxScale is double || _maxScale is PhotoViewScaleBoundary);
         //assert(computeMinScale() <= computeMaxScale());
 
   double computeMinScale(){
