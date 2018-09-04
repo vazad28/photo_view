@@ -6,6 +6,7 @@ A simple zoomable image widget for Flutter
 
 [PhotoView](/lib/photo_view.dart) is useful in full screen exibition cases.
 
+## added callback to know the status of zoom so that I can show/ hide the widgets based on zoom status
 Resolves a image provider and show the result with useful gestures support, such as pinch to zoom and pan.
 
 ## Installation
