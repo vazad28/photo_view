@@ -91,6 +91,7 @@ class PhotoView extends StatefulWidget{
     this.gaplessPlayback = false,
     this.size,
     this.heroTag,
+    this.onScaleUpdate,
   }) : super(key: key);
 
   /// Given a [imageProvider] it resolves into an zoomable image widget using. It
@@ -127,6 +128,9 @@ class PhotoView extends StatefulWidget{
   /// Assists the activation of a hero animation within [PhotoView]
   final Object heroTag;
 
+  ///on scale chamge
+  final Function onScaleUpdate;
+
   @override
   State<StatefulWidget> createState() {
     return new _PhotoViewState();
@@ -138,6 +142,10 @@ class _PhotoViewState extends State<PhotoView>{
   PhotoViewScaleState _scaleState;
   GlobalKey containerKey = GlobalKey();
   ImageInfo _imageInfo;
+
+  // StreamController onImageScaleCtrl = StreamController.broadcast<bool>();
+  // Stream<bool> get onImageScaleStream => onImageScaleCtrl.stream;
+  // StreamSink<bool> get onImageScaleSink => onImageScaleCtrl.sink;
 
   Future<ImageInfo> _getImage(){
     final Completer completer = Completer<ImageInfo>();
@@ -158,6 +166,9 @@ class _PhotoViewState extends State<PhotoView>{
   void onDoubleTap () {
     setState(() {
       _scaleState = nextScaleState(_scaleState);
+      (_scaleState == PhotoViewScaleState.contained)
+      ? widget.onScaleUpdate(false)
+      : widget.onScaleUpdate(true);
     });
   }
 
@@ -167,12 +178,24 @@ class _PhotoViewState extends State<PhotoView>{
     });
   }
 
+  void onScaleUpdate (bool isStateContained) {
+    (_scaleState == PhotoViewScaleState.contained || isStateContained)
+      ? widget.onScaleUpdate(false)
+      : widget.onScaleUpdate(true);
+  }
+
   @override
   void initState(){
     super.initState();
     _getImage();
     _scaleState = PhotoViewScaleState.contained;
   }
+
+  @override
+    void dispose() {
+      //onImageScaleCtrl.close();
+      super.dispose();
+    }
   @override
   Widget build(BuildContext context) {
     return widget.heroTag == null ? buildWithFuture(context) : buildSync(context);
@@ -201,6 +224,7 @@ class _PhotoViewState extends State<PhotoView>{
   Widget buildWrapper(BuildContext context, ImageInfo info){
     return PhotoViewImageWrapper(
       onDoubleTap: onDoubleTap,
+      onScaleUpdateCallback: onScaleUpdate,
       onStartPanning: onStartPanning,
       imageProvider: widget.imageProvider,
       imageInfo: info,
