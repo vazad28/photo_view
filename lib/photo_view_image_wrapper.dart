@@ -9,6 +9,7 @@ class PhotoViewImageWrapper extends StatefulWidget{
     Key key,
     @required this.onDoubleTap,
     @required this.onStartPanning,
+    @required this.onScaleUpdateCallback,
     @required this.imageInfo,
     @required this.scaleState,
     @required this.scaleBoundaries,
@@ -21,6 +22,7 @@ class PhotoViewImageWrapper extends StatefulWidget{
 
   final Function onDoubleTap;
   final Function onStartPanning;
+  final Function onScaleUpdateCallback;
   final ImageInfo imageInfo;
   final PhotoViewScaleState scaleState;
   final Color backgroundColor;
@@ -73,6 +75,9 @@ class _PhotoViewImageWrapperState extends State<PhotoViewImageWrapper> with Tick
     final Offset delta = details.focalPoint - _normalizedPosition;
     if(details.scale != 1.0){
       widget.onStartPanning();
+      widget.onScaleUpdateCallback(true);
+    }else{
+      widget.onScaleUpdateCallback(false);
     }
     setState(() {
       _scale = newScale;
